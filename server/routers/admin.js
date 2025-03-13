@@ -145,11 +145,16 @@ router.get('/postagens/edit/:id', (req, res) => {
 router.post('/postagens/edit', (req,res) => {
   Postagens.findOne({_id: req.body.id}).then((postagem) => {
 
-    postagem.titulo = req.body.titulo
-    postagem.slug = req.body.slug
-    postagem.descricao = req.body.descricao
-    postagem.conteudo = req.body.conteudo
-    postagem.categoria = req.body.categoria
+    postagem.titulo = req.body.titulo,
+    postagem.slug = req.body.slug,
+    postagem.descricao = req.body.descricao,
+    postagem.conteudo = req.body.conteudo,
+    postagem.categoria = req.body.categoria,
+    postagem.preco = req.body.preco,
+    postagem.imagem = req.body.imagem,
+    postagem.isVegetariano = req.body.isVegetariano,
+    postagem.isSemGluten = req.body.isSemGluten,
+    postagem.avaliacao = req.body.avaliacao,
 
     postagem.save().then(() => {
       res.status(200).json({ message: 'Postagem editada com sucesso.' });
