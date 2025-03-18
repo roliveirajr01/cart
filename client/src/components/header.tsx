@@ -1,10 +1,13 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { useCart } from '@/hooks/useCart'
+import { useState } from 'react'
+import { ShoppingCart } from 'lucide-react'
 
 export function Header() {
-  const pathname = usePathname()
+  const [isCartOpen, setIsCartOpen] = useState(false)
+  const { cartItems, cartTotal, removeFromCart } = useCart()
 
   return (
     <header className="fixed top-0 w-full bg-white shadow-md z-50">
@@ -14,86 +17,68 @@ export function Header() {
         </Link>
 
         <div className="flex items-center gap-6">
-          <Link
-            href="/categorias"
-            className={`flex items-center gap-1 hover:text-primary-600 ${pathname.startsWith('/admin') ? 'text-primary-600' : 'text-gray-600'
-              }`}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+          <div className="relative">
+            <button
+              onClick={() => setIsCartOpen(!isCartOpen)}
+              className="relative text-gray-600 hover:text-primary-600"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 4v16m8-8H4"
-              />
-            </svg>
-            <span className="hidden sm:inline">Novo Prato</span>
-          </Link>
-
-          <Link
-            href="/carrinho"
-            className="relative text-gray-600 hover:text-primary-600"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-              />
-            </svg>
-            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
-              3
-            </span>
-          </Link>
-
-          <div className="relative group">
-            <button className="text-gray-600 hover:text-primary-600">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                />
-              </svg>
+              <ShoppingCart className="h-6 w-6" />
+              {cartItems.length > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                  {cartItems.length}
+                </span>
+              )}
             </button>
 
-            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 hidden group-hover:block">
-              <Link
-                href="/conta"
-                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
-              >
-                Meus Dados
-              </Link>
-              <Link
-                href="/pedidos"
-                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
-              >
-                Meus Pedidos
-              </Link>
-              <button className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100">
-                Sair
-              </button>
-            </div>
+            {isCartOpen && (
+              <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl border">
+                <div className="p-4 max-h-96 overflow-y-auto">
+                  <h3 className="text-lg font-bold mb-4">Seu Carrinho</h3>
+
+                  {cartItems.length === 0 ? (
+                    <p className="text-gray-500">Seu carrinho está vazio</p>
+                  ) : (
+                    <>
+                      {cartItems.map((item) => (
+                        <div key={item.id} className="flex items-center gap-4 py-3 border-b">
+                          <img
+                            src={'http://localhost:8081/' + item.image}
+                            alt={item.name}
+                            className="w-12 h-12 object-cover rounded"
+                          />
+                          <div className="flex-1">
+                            <h4 className="font-medium">{item.name}</h4>
+                            <p className="text-sm">
+                              {item.quantity} × R${item.price.toFixed(2)}
+                            </p>
+                          </div>
+                          <button
+                            onClick={() => removeFromCart(item.id)}
+                            className="text-red-500 hover:text-red-700 text-sm"
+                          >
+                            Remover
+                          </button>
+                        </div>
+                      ))}
+
+                      <div className="mt-4 pt-4 border-t">
+                        <div className="flex justify-between mb-4 font-bold">
+                          <span>Total:</span>
+                          <span>R${cartTotal.toFixed(2)}</span>
+                        </div>
+                        <Link
+                          href="/carrinho"
+                          className="block w-full text-center bg-green-600 text-white py-2 rounded hover:bg-primary-700"
+                          onClick={() => setIsCartOpen(false)}
+                        >
+                          Ver Carrinho
+                        </Link>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </nav>

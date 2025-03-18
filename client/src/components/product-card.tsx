@@ -1,5 +1,6 @@
 'use client'
-
+import { useCart } from '@/hooks/useCart'
+import { toast } from 'react-hot-toast'
 export interface Product {
   _id: string
   titulo: string
@@ -18,6 +19,21 @@ export interface Product {
 }
 
 export function ProductCard({ product }: { product: Product }) {
+  const { addToCart } = useCart()
+
+  const handleAddToCart = () => {
+    addToCart({
+      id: product._id,
+      name: product.titulo,
+      price: product.preco,
+      image: product.imagem,
+      quantity: 1
+    })
+    toast.success('Item adicionado ao carrinho! 🛒', {
+      position: 'bottom-right'
+    })
+  }
+
   return (
     <div className="flex flex-col bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden h-full">
       <div className="relative aspect-square bg-gray-100">
@@ -85,7 +101,10 @@ export function ProductCard({ product }: { product: Product }) {
           </div>
         )}
 
-        <button className="mt-2 bg-primary-500 hover:bg-primary-600 text-white py-2 px-4 rounded-lg transition-colors duration-200 font-medium flex items-center justify-center gap-2">
+        <button
+          onClick={handleAddToCart}
+          className="mt-2 bg-green-500 hover:bg-primary-600 text-white py-2 px-4 rounded-lg transition-colors duration-200 font-medium flex items-center justify-center gap-2"
+        >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
