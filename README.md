@@ -65,7 +65,7 @@ Pré-requisitos:
 
 ```bash
 # Clone o repositório
-git clone https://github.com/seu-usuario/fullstack-learning-lab.git
+git clone https://github.com/seu-usuario/cart.git
 
 # Inicie os containers
 docker-compose up --build
