@@ -30,7 +30,7 @@ Este é um projeto pessoal onde estou:
 
 - Autenticação de usuários
 - Upload de arquivos com Multer
-- CRUD básico para posts de blog
+- CRUD
 - Configuração Docker multi-container
 - Layout responsivo com Tailwind CSS
 - Documentação interativa de APIs com Swagger
@@ -81,7 +81,7 @@ docker-compose up --build
 # - Swagger UI: http://localhost:8081/api-docs
 # - MongoDB: mongodb://localhost:27017
 
-## ⚠️ Nota Crítica
+### ⚠️ Nota Crítica
 **Atenção:** Devido às atualizações constantes no backend durante o aprendizado, o frontend pode:
 - Ter endpoints desatualizados no Swagger
 - Apresentar comportamentos inesperados
