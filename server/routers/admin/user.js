@@ -1,10 +1,49 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-require('../models/Usuario');
+require('../../models/User');
 const Usuario = mongoose.model('usuarios');
 const bcrypt = require('bcryptjs');
 const passport = require('passport')
+
+/**
+ * @swagger
+ * tags:
+ *   name: Autenticação
+ *   description: Gestão de usuários e login
+ */
+
+/**
+ * @swagger
+ * /admin/registro:
+ *   post:
+ *     summary: Registra um novo usuário
+ *     tags: [Autenticação]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - nome
+ *               - email
+ *               - senha
+ *             properties:
+ *               nome:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               senha:
+ *                 type: string
+ *                 format: password
+ *     responses:
+ *       201:
+ *         description: Usuário registrado com sucesso
+ *       400:
+ *         description: Erro na validação dos dados
+ */
 
 router.post('/registro', (req, res) => {
   const { nome, email, senha } = req.body;
@@ -58,6 +97,37 @@ router.post('/registro', (req, res) => {
       res.status(400).json({ message: 'Erro ao buscar usuário: ' + e.message });
     });
 });
+
+/**
+ * @swagger
+ * /admin/login:
+ *   post:
+ *     summary: Autentica um usuário
+ *     tags: [Autenticação]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - senha
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               senha:
+ *                 type: string
+ *                 format: password
+ *     responses:
+ *       200:
+ *         description: Login bem-sucedido
+ *       401:
+ *         description: Credenciais inválidas
+ *       500:
+ *         description: Erro interno do servidor
+ */
 
 router.post('/login', (req, res, next) => {
   passport.authenticate('local', {

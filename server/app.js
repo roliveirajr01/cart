@@ -3,13 +3,37 @@ const handlebars = require('express-handlebars');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path');
-const admin = require('./routers/admin');
+const admin = require('./routers/admin/admin');
+const products = require('./routers/users/products');
+const categories = require('./routers/users/categories')
 const session = require('express-session')
 const flash = require('connect-flash')
 const app = express();
-const usuarios = require("./routers/usuario")
+const userAdmin = require("./routers/users/users")
 const passport = require('passport')
 const cors = require('cors');
+const swaggerJsdoc = require('swagger-jsdoc'); 
+const swaggerUi = require('swagger-ui-express');
+
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'API do Sistema de Produtos',
+      version: '1.0.0',
+      description: 'Documentação das APIs para gestão de produtos, categorias e usuários',
+    },
+    servers: [
+      {
+        url: 'http://localhost:8081',
+      },
+    ],
+  },
+  apis: ['./routers/**/*.js'],
+};
+
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 require('./config/auth')(passport)
 
@@ -67,8 +91,12 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/admin', admin);
-app.use('/usuarios', usuarios);
+app.use('/admin', admin, userAdmin);
+app.use('/usuarios', userAdmin);
+
+app.use('/produtos', products);
+
+app.use('/categorias', categories)
 
 const PORT = 8081;
 app.listen(PORT, () => {
