@@ -45,7 +45,15 @@ const passport = require('passport')
  *         description: Erro na validação dos dados
  */
 
-router.post('/registro', (req, res) => {
+const isAdmin = (req, res, next) => {
+  if (req.user && req.user.role === 'admin') {
+    next();
+  } else {
+    res.status(403).json({ error: 'Acesso não autorizado' });
+  }
+};
+
+router.post('/registro', isAdmin, (req, res) => {
   const { nome, email, senha } = req.body;
 
   if (!nome || typeof nome === undefined || nome === null) {
@@ -67,6 +75,7 @@ router.post('/registro', (req, res) => {
           nome: nome,
           email: email,
           senha: senha,
+          role: 'admin'
         });
 
         bcrypt.genSalt(10, (erro, salt) => {

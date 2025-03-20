@@ -20,7 +20,7 @@ const Product = new Schema({
   },
   categoria: {
     type: Schema.Types.ObjectId,
-    ref: 'categorias',
+    ref: 'categories',
     required: true
   },
   preco: {
@@ -30,14 +30,6 @@ const Product = new Schema({
   imagem: {
     type: String,
     required: true
-  },
-  isVegetariano: {
-    type: Boolean,
-    default: false
-  },
-  isSemGluten: {
-    type: Boolean,
-    default: false
   },
   avaliacao: {
     type: Number,

@@ -51,11 +51,15 @@ router.post('/categorias/nova', (req, res) => {
   if (!nome || !slug) {
     return res.status(400).json({ error: 'Nome e slug são obrigatórios' });
   }
+
   const novaCategoria = new Categorie({ nome, slug });
 
   novaCategoria.save()
-    .then(() => {
-      res.status(201).json({ message: 'Categoria salva com sucesso' });
+    .then((savedCategoria) => {
+      res.status(201).json({
+        message: 'Categoria salva com sucesso',
+        id: savedCategoria._id
+      });
     })
     .catch((error) => {
       res.status(400).json({ error: 'Erro ao salvar categoria: ' + error.message });
@@ -131,9 +135,9 @@ router.get('/produto/add', (req, res) => {
 
 /**
  * @swagger
- * /admin/prato/novo:
+ * /admin/produto/novo:
  *   post:
- *     summary: Cria um novo prato/produto
+ *     summary: Cria um novo produto
  *     tags: [Admin]
  *     consumes:
  *       - multipart/form-data
@@ -171,14 +175,14 @@ router.get('/produto/add', (req, res) => {
  *                 type: number
  *     responses:
  *       201:
- *         description: Prato criado com sucesso
+ *         description: Produto criado com sucesso
  *       400:
  *         description: Erro na validação dos dados
  *       500:
  *         description: Erro interno do servidor
  */
 
-router.post('/prato/novo', upload.single('imagem'), (req, res) => {
+router.post('/produto/novo', upload.single('imagem'), (req, res) => {
   if (req.body.categoria === "0") {
     return res.status(400).json({ 
       error: 'Selecione uma categoria válida' 
@@ -187,11 +191,11 @@ router.post('/prato/novo', upload.single('imagem'), (req, res) => {
 
   if (!req.file) {
     return res.status(400).json({
-      error: 'Imagem do prato é obrigatória'
+      error: 'Imagem do produto é obrigatória'
     });
   }
 
-  const novoPrato = new Product({
+  const newProduct = new Product({
     titulo: req.body.titulo,
     slug: req.body.slug,
     descricao: req.body.descricao,
@@ -199,27 +203,25 @@ router.post('/prato/novo', upload.single('imagem'), (req, res) => {
     categoria: req.body.categoria,
     preco: req.body.preco,
     imagem: `/uploads/dishes/${req.file.filename}`,
-    isVegetariano: req.body.isVegetariano === 'true',
-    isSemGluten: req.body.isSemGluten === 'true',
     avaliacao: req.body.avaliacao || 0
   });
 
-  novoPrato.save()
+  newProduct.save()
     .then(() => {
       res.status(201).json({
-        success: 'Prato cadastrado com sucesso!',
-        imagemUrl: novoPrato.imagem
+        success: 'Produto cadastrado com sucesso!',
+        imagemUrl: newProduct.imagem
       });
     })
     .catch((error) => {
       if (req.file) {
-        const fullPath = path.join(__dirname, '../public', novoPrato.imagem);
+        const fullPath = path.join(__dirname, '../public', newProduct.imagem);
         if (fs.existsSync(fullPath)) {
           fs.unlinkSync(fullPath);
         }
       }
       res.status(500).json({
-        error: 'Erro ao salvar prato: ' + error.message
+        error: 'Erro ao salvar produto: ' + error.message
       });
     });
 });
@@ -248,8 +250,6 @@ router.post('/produto/edit', (req,res) => {
     postagem.categoria = req.body.categoria,
     postagem.preco = req.body.preco,
     postagem.imagem = req.body.imagem,
-    postagem.isVegetariano = req.body.isVegetariano,
-    postagem.isSemGluten = req.body.isSemGluten,
     postagem.avaliacao = req.body.avaliacao,
 
     postagem.save().then(() => {

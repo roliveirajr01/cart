@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 require('../../models/User');
-const Usuario = mongoose.model('usuarios');
+const User = mongoose.model('usuarios');
 const bcrypt = require('bcryptjs');
 const passport = require('passport')
 
@@ -50,15 +50,16 @@ router.post('/registro', (req, res) => {
     return res.status(400).json({ message: 'Senha inválida.' });
   }
 
-  Usuario.findOne({ email: email })
+  User.findOne({ email: email })
     .then((usuario) => {
       if (usuario) {
         return res.status(400).json({ message: 'Usuário já existe.' });
       } else {
-        const novoUsuario = new Usuario({
+        const newUser = new User({
           nome: nome,
           email: email,
           senha: senha,
+          role: 'user'
         });
 
         bcrypt.genSalt(10, (erro, salt) => {
@@ -66,14 +67,14 @@ router.post('/registro', (req, res) => {
             return res.status(400).json({ message: 'Erro ao gerar salt.' });
           }
 
-          bcrypt.hash(novoUsuario.senha, salt, (erro, hash) => {
+          bcrypt.hash(newUser.senha, salt, (erro, hash) => {
             if (erro) {
               return res.status(400).json({ message: 'Erro ao gerar hash da senha.' });
             }
 
-            novoUsuario.senha = hash;
+            newUser.senha = hash;
 
-            novoUsuario
+            newUser
               .save()
               .then(() => {
                 res.status(201).json({ message: 'Usuário salvo com sucesso.' });
@@ -99,25 +100,43 @@ router.post('/login', (req, res, next) => {
 });
 
 router.patch('/login/update', (req,res) => {
-  Usuario.findOne({_id: req.body.id}).then((postagem) => {
+  User.findOne({_id: req.body.id}).then((user) => {
 
-    postagem.titulo = req.body.titulo,
-    postagem.slug = req.body.slug,
-    postagem.descricao = req.body.descricao,
-    postagem.conteudo = req.body.conteudo,
-    postagem.categoria = req.body.categoria,
-    postagem.preco = req.body.preco,
-    postagem.imagem = req.body.imagem,
-    postagem.isVegetariano = req.body.isVegetariano,
-    postagem.isSemGluten = req.body.isSemGluten,
-    postagem.avaliacao = req.body.avaliacao,
-
-    postagem.save().then(() => {
-      res.status(200).json({ message: 'Postagem editada com sucesso.' });
+  user.endereco = req.body.endereco
+  user.numeroEndereco = req.body.numeroEndereco
+  
+    
+    user.save().then(() => {
+      res.status(200).json({ message: 'Usuario editado com sucesso.' });
     })
   }).catch((e) => {
     res.status(400).json({ message: 'Houve um erro ao salvar a edição: ' + e.message });
   })
 })
-
+/**
+ * @swagger
+ * /usuarios/logout:
+ *   post:
+ *     summary: Encerra a sessão do usuário
+ *     tags: [Autenticação]
+ *     responses:
+ *       200:
+ *         description: Logout realizado com sucesso
+ *       500:
+ *         description: Erro no servidor
+ */
+router.post('/logout', (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      return res.status(500).json({ error: 'Erro ao fazer logout' });
+    }
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('Erro ao destruir sessão:', err);
+      }
+      res.clearCookie('connect.sid');
+      res.status(200).json({ message: 'Logout bem-sucedido' });
+    });
+  });
+});
 module.exports = router;

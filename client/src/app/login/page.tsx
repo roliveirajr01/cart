@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 
 export default function LoginPage() {
   const [isRegistering, setIsRegistering] = useState(false);
@@ -12,8 +13,11 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { login } = useAuth();
 
   const validateForm = () => {
+    setError('');
+
     if (isRegistering) {
       if (password !== confirmPassword) {
         setError('As senhas não coincidem');
@@ -32,24 +36,35 @@ export default function LoginPage() {
     if (!validateForm()) return;
 
     setLoading(true);
-    setError('');
 
     try {
-      const endpoint = isRegistering ? 'http://localhost:8081/usuarios/registro' : 'http://localhost:8081/usuarios/login';
-      const body = isRegistering ? { nome: name, email: email, senha: password } : { email, senha: password };
+      const endpoint = isRegistering
+        ? 'http://localhost:8081/usuarios/registro'
+        : 'http://localhost:8081/usuarios/login';
+
+      const body = isRegistering
+        ? { nome: name, email: email, senha: password }
+        : { email, senha: password };
 
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
+        credentials: 'include'
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        router.push('/minha-conta');
+        if (isRegistering) {
+          await login({ email, senha: password });
+        } else {
+          login(data.user);
+        }
+
+        router.push(isRegistering ? '/minha-conta' : '/admin');
       } else {
-        setError(data.message || 'Erro na operação');
+        setError(data.error || data.message || 'Erro na operação');
       }
     } catch (err) {
       setError('Erro de conexão com o servidor');
@@ -57,8 +72,8 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
-
   return (
+
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
@@ -185,5 +200,6 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+
   );
 }
