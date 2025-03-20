@@ -62,6 +62,14 @@ Este é um projeto pessoal onde estou:
 - Manter documentação Swagger sincronizada com o backend
 - Lidar com breaking changes entre front/backend
 
+### ⚠️ Nota Crítica
+**Atenção:** Devido às atualizações constantes no backend durante o aprendizado, o frontend pode:
+- Ter endpoints desatualizados no Swagger
+- Apresentar comportamentos inesperados
+- Requerer reinicialização frequente dos containers
+- Necessidade de inicialização individual das camadas de front e back end
+- Faltar endpoints no proprio Swagger
+
 ## 🚀 Como Executar
 
 Pré-requisitos:
@@ -81,10 +89,3 @@ docker-compose up --build
 # - Swagger UI: http://localhost:8081/api-docs
 # - MongoDB: mongodb://localhost:27017
 
-### ⚠️ Nota Crítica
-**Atenção:** Devido às atualizações constantes no backend durante o aprendizado, o frontend pode:
-- Ter endpoints desatualizados no Swagger
-- Apresentar comportamentos inesperados
-- Requerer reinicialização frequente dos containers
-- Necessidade de inicialização individual das camadas de front e back end
-- Faltar endpoints no proprio Swagger
