@@ -10,6 +10,7 @@ Repositório de estudos práticos para explorar:
 - **Node.js/Express** com MongoDB
 - **Tailwind CSS** para estilização
 - **Docker** para containerização
+- **Swagger** para documentação de APIs
 
 > "A jornada de mil milhas começa com o primeiro passo" - Lao Tzu
 
@@ -21,6 +22,7 @@ Este é um projeto pessoal onde estou:
 - Implementando novas funcionalidades para praticar Next.js
 - Experimentando configurações com Docker/Docker Compose
 - Aprendendo a utilizar Tailwind UI na prática
+- Documentando APIs com Swagger em tempo real
 
 **Aviso importante:** Este não é um projeto profissional, mas sim um laboratório de aprendizado onde estou testando diferentes tecnologias e cometendo (e corrigindo) erros intencionais.
 
@@ -31,13 +33,14 @@ Este é um projeto pessoal onde estou:
 - CRUD básico para posts de blog
 - Configuração Docker multi-container
 - Layout responsivo com Tailwind CSS
+- Documentação interativa de APIs com Swagger
 
 ## 💻 Stack Tecnológica
 
 | Camada          | Tecnologias                                                                 |
 |-----------------|-----------------------------------------------------------------------------|
 | **Frontend**    | Next.js 15, React 19, Tailwind CSS 3, React Dropzone                        |
-| **Backend**     | Node.js 20, Express 4, Mongoose 8, Passport.js                              |
+| **Backend**     | Node.js 20, Express 4, Mongoose 8, Passport.js, Swagger                     |
 | **Banco**       | MongoDB (via Docker)                                                        |
 | **Infra**       | Docker 24, Docker Compose                                                   |
 | **Ferramentas** | ESLint, TypeScript 5, PostCSS                                               |
@@ -48,6 +51,7 @@ Este é um projeto pessoal onde estou:
 - [x] Conexão entre containers Docker
 - [x] Configuração de ambiente de produção
 - [x] Autenticação JWT/sessions
+- [x] Documentação Swagger em tempo real
 - [ ] Testes E2E
 - [ ] Deploy em cloud
 
@@ -55,7 +59,8 @@ Este é um projeto pessoal onde estou:
 - Configurar comunicação entre containers
 - Gerenciar diferentes versões de dependências
 - Implementar upload de arquivos seguro
-- Aprender boas práticas com Docker
+- Manter documentação Swagger sincronizada com o backend
+- Lidar com breaking changes entre front/backend
 
 ## 🚀 Como Executar
 
@@ -73,4 +78,13 @@ docker-compose up --build
 # Acesse:
 # - Frontend: http://localhost:3000
 # - Backend: http://localhost:8081
+# - Swagger UI: http://localhost:8081/api-docs
 # - MongoDB: mongodb://localhost:27017
+
+## ⚠️ Nota Crítica
+**Atenção:** Devido às atualizações constantes no backend durante o aprendizado, o frontend pode:
+- Ter endpoints desatualizados no Swagger
+- Apresentar comportamentos inesperados
+- Requerer reinicialização frequente dos containers
+- Necessidade de inicialização individual das camadas de front e back end
+- Faltar endpoints no proprio Swagger
